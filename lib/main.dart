@@ -1,3 +1,4 @@
+import 'package:breeze/screens/chat_screen.dart';
 import 'package:flutter/material.dart';
 import 'screens/login_screen.dart';
 
@@ -12,7 +13,11 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: LoginScreen(),
+      initialRoute: '/', // 앱 시작 시 보여줄 화면
+      routes: {
+        '/': (context) => LoginScreen(),
+        '/chat': (context) => ChatScreen(),
+      },
     );
   }
 }
