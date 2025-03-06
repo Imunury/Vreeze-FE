@@ -11,7 +11,7 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  Color backgroundColor = Colors.white;
+  Color backgroundColor = Colors.black;
   final List<Color> colorList = [
     Colors.red,
     Colors.green,
@@ -47,11 +47,11 @@ class _LoginScreenState extends State<LoginScreen> {
       BuildContext context, String text, double panelHeight) {
     final screenWidth = MediaQuery.of(context).size.width;
     return SizedBox(
-      width: screenWidth * 0.8, // 버튼 너비: 화면의 80%
-      height: panelHeight * 0.2, // 버튼 높이: 패널 높이의 20%
+      width: screenWidth * 0.9, // 버튼 너비: 화면의 80%
+      height: panelHeight * 0.18, // 버튼 높이: 패널 높이의 20%
       child: ElevatedButton(
         onPressed: () {
-          if (text == "로그인") {
+          if (text == "전화번호로 계속하기") {
             Navigator.pushNamed(context, '/chat'); // "로그인" 버튼 클릭 시 /chat으로 이동
           }
           // 다른 버튼은 추후 기능 추가 가능
@@ -66,7 +66,7 @@ class _LoginScreenState extends State<LoginScreen> {
         child: Text(
           text,
           style: const TextStyle(
-            fontSize: 16,
+            fontSize: 14,
             fontWeight: FontWeight.bold,
             color: Colors.white, // 버튼 글씨: 흰색
           ),
@@ -78,7 +78,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
-    final bottomPanelHeight = screenSize.height * 0.25; // 하단 패널 높이: 화면의 25%
+    final bottomPanelHeight = screenSize.height * 0.35; // 하단 패널 높이: 화면의 25%
 
     return Scaffold(
       drawer: const SideBar(),
@@ -116,10 +116,10 @@ class _LoginScreenState extends State<LoginScreen> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    _buildBottomButton(
-                        context, "Google로 계속하기", bottomPanelHeight),
-                    _buildBottomButton(context, "회원 가입", bottomPanelHeight),
-                    _buildBottomButton(context, "로그인", bottomPanelHeight),
+                    _buildBottomButton(context, "카카오톡으로 계속하기", bottomPanelHeight),
+                    _buildBottomButton(context, "네이버로 계속하기", bottomPanelHeight),
+                    _buildBottomButton(context, "Google로 계속하기", bottomPanelHeight),
+                    _buildBottomButton(context, "전화번호로 계속하기", bottomPanelHeight),
                   ],
                 ),
               ),

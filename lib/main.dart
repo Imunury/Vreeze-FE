@@ -1,4 +1,5 @@
 import 'package:breeze/screens/chat_screen.dart';
+import 'package:breeze/screens/chat_voice.dart';
 import 'package:flutter/material.dart';
 import 'screens/login_screen.dart';
 
@@ -17,6 +18,7 @@ class MyApp extends StatelessWidget {
       routes: {
         '/': (context) => LoginScreen(),
         '/chat': (context) => ChatScreen(),
+        '/chat_voice': (context) => ChatVoiceScreen(),
       },
     );
   }
