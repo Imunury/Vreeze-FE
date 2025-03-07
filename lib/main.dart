@@ -1,5 +1,7 @@
 import 'package:breeze/screens/chat_screen.dart';
 import 'package:breeze/screens/chat_voice.dart';
+import 'package:breeze/screens/make_voice_screen.dart';
+import 'package:breeze/screens/my_subscribe_screen.dart';
 import 'package:flutter/material.dart';
 import 'screens/login_screen.dart';
 
@@ -19,6 +21,8 @@ class MyApp extends StatelessWidget {
         '/': (context) => LoginScreen(),
         '/chat': (context) => ChatScreen(),
         '/chat_voice': (context) => ChatVoiceScreen(),
+        '/my_subscribe' : (context) => MySubscribeScreen(),
+        '/make_voice' : (context) => MakeVoiceScreen(),
       },
     );
   }

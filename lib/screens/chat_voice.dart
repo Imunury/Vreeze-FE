@@ -59,7 +59,7 @@ class _ChatVoiceScreenState extends State<ChatVoiceScreen> {
                 padding: EdgeInsets.all(30),
                 backgroundColor: Colors.white,
               ),
-              child: Icon(Icons.arrow_back, color: Colors.black),
+              child: Icon(Icons.close, color: Colors.black),
             ),
           ),
         ],

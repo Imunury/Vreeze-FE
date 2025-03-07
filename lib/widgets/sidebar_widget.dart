@@ -18,6 +18,7 @@ class SideBar extends StatelessWidget {
               onTap: () {
                 // 원하는 기능 추가
                 Navigator.pop(context); // 사이드바 닫기
+                Navigator.pushNamed(context, '/my_subscribe');
               },
             ),
             ListTile(
@@ -26,6 +27,7 @@ class SideBar extends StatelessWidget {
               onTap: () {
                 // 원하는 기능 추가
                 Navigator.pop(context);
+                Navigator.pushNamed(context, '/make_voice');
               },
             ),
           ],
