@@ -10,8 +10,6 @@ class SettingScreen extends StatelessWidget {
       children: [
         _buildSettingItem(Icons.notifications, '알림 설정'),
         _buildSettingItem(Icons.dark_mode, '테마 변경'),
-        _buildSettingItem(Icons.account_circle, '계정 관리'),
-        _buildSettingItem(Icons.lock, '비밀번호 변경'),
         _buildSettingItem(Icons.info, '앱 정보'),
       ],
     );
