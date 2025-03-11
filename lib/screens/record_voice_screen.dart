@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 
-import '../widgets/header_widget.dart';
-import '../widgets/sidebar_widget.dart';
-
 class RecordVoiceScreen extends StatefulWidget {
+  const RecordVoiceScreen({super.key});
+
   @override
   _RecordVoiceScreenState createState() => _RecordVoiceScreenState();
 }

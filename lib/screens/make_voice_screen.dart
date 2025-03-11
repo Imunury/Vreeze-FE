@@ -1,7 +1,4 @@
-import 'package:breeze/widgets/header_widget.dart';
 import 'package:flutter/material.dart';
-
-import '../widgets/sidebar_widget.dart';
 
 class MakeVoiceScreen extends StatefulWidget {
   @override
@@ -18,7 +15,7 @@ class _MakeVoiceScreenState extends State<MakeVoiceScreen> {
         children: [
           // "내 목소리 만들기" 버튼 (오른쪽 상단)
           Positioned(
-            top: 60,
+            top: 20,
             right: 20,
             child: ElevatedButton(
               onPressed: () {
@@ -42,9 +39,9 @@ class _MakeVoiceScreenState extends State<MakeVoiceScreen> {
           // 환경 설정 안내문 (오른쪽 버튼을 눌러야 나타남)
           if (showInstructions)
             Positioned(
-              top: 100,
+              top: 80,
               left: 20,
-              right: MediaQuery.of(context).size.width * 0.5,
+              right: MediaQuery.of(context).size.width * 0.4,
               child: Container(
                 padding: EdgeInsets.all(16),
                 decoration: BoxDecoration(

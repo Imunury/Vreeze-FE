@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import '../widgets/header_widget.dart';
-import '../widgets/sidebar_widget.dart';
 
 class ChatScreen extends StatefulWidget {
+  const ChatScreen({super.key});
+
   @override
   _ChatScreenState createState() => _ChatScreenState();
 }

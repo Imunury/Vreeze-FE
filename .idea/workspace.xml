@@ -10,16 +10,17 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="7e692862-9a38-43dc-9c00-02e951ace2e7" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/lib/MainLayout.dart" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/screens/record_voice_screen.dart" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/widgets/header_widget.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/lib/screens/profile.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/lib/screens/setting_screen.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/analysis_options.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/analysis_options.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/MainLayout.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/MainLayout.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/main.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/main.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/screens/chat_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/screens/chat_screen.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/screens/chat_voice.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/screens/chat_voice_screen.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/screens/make_voice_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/screens/make_voice_screen.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/screens/my_subscribe_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/screens/my_subscribe_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/screens/record_voice_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/screens/record_voice_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/widgets/header_widget.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/widgets/header_widget.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/widgets/sidebar_widget.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/widgets/sidebar_widget.dart" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 
-import '../widgets/header_widget.dart';
-import '../widgets/sidebar_widget.dart';
-
 class MySubscribeScreen extends StatefulWidget {
+  const MySubscribeScreen({super.key});
+
   @override
   _MySubscribeScreenState createState() => _MySubscribeScreenState();
 }
