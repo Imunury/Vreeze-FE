@@ -1,9 +1,12 @@
+import 'package:flutter/material.dart';
 import 'package:breeze/screens/chat_screen.dart';
-import 'package:breeze/screens/chat_voice.dart';
+import 'package:breeze/screens/chat_voice_screen.dart';
 import 'package:breeze/screens/make_voice_screen.dart';
 import 'package:breeze/screens/my_subscribe_screen.dart';
-import 'package:flutter/material.dart';
-import 'screens/login_screen.dart';
+import 'package:breeze/screens/record_voice_screen.dart';
+import 'package:breeze/screens/login_screen.dart';
+
+import 'MainLayout.dart';
 
 void main() {
   runApp(const MyApp());
@@ -16,13 +19,14 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      initialRoute: '/', // 앱 시작 시 보여줄 화면
+      initialRoute: '/',
       routes: {
         '/': (context) => LoginScreen(),
-        '/chat': (context) => ChatScreen(),
-        '/chat_voice': (context) => ChatVoiceScreen(),
-        '/my_subscribe' : (context) => MySubscribeScreen(),
-        '/make_voice' : (context) => MakeVoiceScreen(),
+        '/chat': (context) => MainLayout(body: ChatScreen()),
+        '/chat_voice': (context) => MainLayout(body: ChatVoiceScreen()),
+        '/my_subscribe': (context) => MainLayout(body: MySubscribeScreen()),
+        '/make_voice': (context) => MainLayout(body: MakeVoiceScreen()),
+        '/record_voice': (context) => MainLayout(body: RecordVoiceScreen()),
       },
     );
   }

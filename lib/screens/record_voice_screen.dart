@@ -3,12 +3,12 @@ import 'package:flutter/material.dart';
 import '../widgets/header_widget.dart';
 import '../widgets/sidebar_widget.dart';
 
-class MySubscribeScreen extends StatefulWidget {
+class RecordVoiceScreen extends StatefulWidget {
   @override
-  _MySubscribeScreenState createState() => _MySubscribeScreenState();
+  _RecordVoiceScreenState createState() => _RecordVoiceScreenState();
 }
 
-class _MySubscribeScreenState extends State<MySubscribeScreen> {
+class _RecordVoiceScreenState extends State<RecordVoiceScreen> {
 
   @override
   Widget build(BuildContext context) {
