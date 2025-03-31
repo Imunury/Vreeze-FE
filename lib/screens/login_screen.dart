@@ -29,7 +29,7 @@ class _LoginScreenState extends State<LoginScreen> {
   void initState() {
     super.initState();
     // 3초마다 랜덤하게 배경색 변경 (2초 애니메이션)
-    _timer = Timer.periodic(Duration(seconds: 3), (timer) {
+    _timer = Timer.periodic(const Duration(seconds: 3), (timer) {
       setState(() {
         backgroundColor = colorList[_random.nextInt(colorList.length)];
       });
@@ -42,13 +42,13 @@ class _LoginScreenState extends State<LoginScreen> {
     super.dispose();
   }
 
-  // 하단 패널의 각 버튼 생성 함수
+  // 하단 패널의 각 버튼 생성 함수 (아이콘 추가)
   Widget _buildBottomButton(
-      BuildContext context, String text, double panelHeight) {
+      BuildContext context, String text, double panelHeight, String icon) {
     final screenWidth = MediaQuery.of(context).size.width;
     return SizedBox(
-      width: screenWidth * 0.9, // 버튼 너비: 화면의 80%
-      height: panelHeight * 0.18, // 버튼 높이: 패널 높이의 20%
+      width: screenWidth * 0.9, // 버튼 너비: 화면의 90%
+      height: panelHeight * 0.18, // 버튼 높이: 패널 높이의 18%
       child: ElevatedButton(
         onPressed: () {
           if (text == "전화번호로 계속하기") {
@@ -63,13 +63,20 @@ class _LoginScreenState extends State<LoginScreen> {
             borderRadius: BorderRadius.circular(16), // 더 큰 border-radius
           ),
         ),
-        child: Text(
-          text,
-          style: const TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.bold,
-            color: Colors.white, // 버튼 글씨: 흰색
-          ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Image.asset(icon, width: 24, height: 24), // 아이콘 추가
+            const SizedBox(width: 10),
+            Text(
+              text,
+              style: const TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+                color: Colors.white, // 버튼 글씨: 흰색
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -78,19 +85,19 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
-    final bottomPanelHeight = screenSize.height * 0.35; // 하단 패널 높이: 화면의 25%
+    final bottomPanelHeight = screenSize.height * 0.35; // 하단 패널 높이: 화면의 35%
 
     return Scaffold(
       drawer: const SideBar(),
       body: AnimatedContainer(
-        duration: Duration(seconds: 2),
+        duration: const Duration(seconds: 2),
         color: backgroundColor,
         child: Stack(
           children: [
             // 중앙에 "Vreeze" 텍스트 (약간 위쪽으로 올림)
             Align(
-              alignment: Alignment(0, -0.3),
-              child: Text(
+              alignment: const Alignment(0, -0.3),
+              child: const Text(
                 "Vreeze",
                 style: TextStyle(
                   fontSize: 40,
@@ -99,7 +106,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               ),
             ),
-            // 하단 고정 패널 (원래 상자)
+            // 하단 고정 패널
             Positioned(
               bottom: 0,
               left: 0,
@@ -116,10 +123,33 @@ class _LoginScreenState extends State<LoginScreen> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    _buildBottomButton(context, "카카오톡으로 계속하기", bottomPanelHeight),
-                    _buildBottomButton(context, "네이버로 계속하기", bottomPanelHeight),
-                    _buildBottomButton(context, "Google로 계속하기", bottomPanelHeight),
-                    _buildBottomButton(context, "전화번호로 계속하기", bottomPanelHeight),
+                    _buildBottomButton(
+                      context,
+                      "카카오톡으로 계속하기",
+                      bottomPanelHeight,
+                      "/img/login_kakao.png",
+                    ),
+                    const SizedBox(height: 12),
+                    _buildBottomButton(
+                      context,
+                      "네이버로 계속하기",
+                      bottomPanelHeight,
+                      "/img/login_naver.png",
+                    ),
+                    const SizedBox(height: 12),
+                    _buildBottomButton(
+                      context,
+                      "Google로 계속하기",
+                      bottomPanelHeight,
+                      "/img/login_google.png",
+                    ),
+                    const SizedBox(height: 12),
+                    _buildBottomButton(
+                      context,
+                      "전화번호로 계속하기",
+                      bottomPanelHeight,
+                      "/img/login_phone.png",
+                    ),
                   ],
                 ),
               ),

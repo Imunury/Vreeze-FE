@@ -23,7 +23,7 @@ class _RecordVoiceScreenState extends State<RecordVoiceScreen> {
 
   Future<void> loadTexts() async {
     try {
-      String data = await rootBundle.loadString('assets/utils/text1.json');
+      String data = await rootBundle.loadString('/utils/text1.json');
       List<dynamic> jsonList = json.decode(data);
 
       List<Map<String, String>> parsedTexts = jsonList
