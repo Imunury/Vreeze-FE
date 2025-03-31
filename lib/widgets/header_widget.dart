@@ -8,17 +8,20 @@ class HeaderWidget extends StatelessWidget implements PreferredSizeWidget {
     return AppBar(
       backgroundColor: Colors.black,
       elevation: 0,
-      leading: IconButton(
-        icon: Icon(Icons.menu, color: Colors.white),
-        onPressed: () {
-          Scaffold.of(context).openDrawer();
-        },
+      centerTitle: true, // 제목을 가운데 정렬
+      leading: Builder(
+        builder: (context) => IconButton(
+          icon: const Icon(Icons.menu, color: Colors.white),
+          onPressed: () {
+            Scaffold.of(context).openDrawer();
+          },
+        ),
       ),
       title: GestureDetector(
         onTap: () {
           Navigator.pushNamed(context, '/chat'); // 클릭 시 /chat 화면 이동
         },
-        child: Text(
+        child: const Text(
           'Vreeze',
           style: TextStyle(
             color: Colors.white,
@@ -27,18 +30,9 @@ class HeaderWidget extends StatelessWidget implements PreferredSizeWidget {
           ),
         ),
       ),
-      centerTitle: true,
-      actions: [
-        IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-      ],
     );
   }
 
   @override
-  Size get preferredSize => Size.fromHeight(56);
+  Size get preferredSize => const Size.fromHeight(56);
 }

@@ -9,11 +9,21 @@ class MainLayout extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: HeaderWidget(), // 공통 상단 바
-      drawer: SideBar(), // 사이드바
-      backgroundColor: Colors.black,
-      body: body, // 개별 화면 적용
+    return GestureDetector(
+      onHorizontalDragUpdate: (details) {
+        if (details.primaryDelta! > 20) {
+          // 오른쪽에서 왼쪽으로 드래그하면 뒤로가기
+          if (Navigator.of(context).canPop()) {
+            Navigator.of(context).pop();
+          }
+        }
+      },
+      child: Scaffold(
+        appBar: HeaderWidget(), // 공통 상단 바
+        drawer: SideBar(), // 사이드바
+        backgroundColor: Colors.black,
+        body: body, // 개별 화면 적용
+      ),
     );
   }
 }
