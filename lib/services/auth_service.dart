@@ -1,164 +1,66 @@
 import 'package:dio/dio.dart';
+import 'package:dio/dio.dart';
+import 'package:breeze/cores/dio_client.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'dart:async';
+import 'package:jwt_decoder/jwt_decoder.dart';
 
 class AuthService {
-  static final AuthService _instance = AuthService._internal();
-  factory AuthService() => _instance;
-  AuthService._internal();
+  final Dio dio;
 
-  final Dio _dio = Dio(BaseOptions(
-    baseUrl: 'YOUR_API_BASE_URL', // Replace with your actual API base URL
-    connectTimeout: const Duration(seconds: 5),
-    receiveTimeout: const Duration(seconds: 3),
-  ));
-
-  static const String _accessTokenKey = 'access_token';
-  static const String _refreshTokenKey = 'refresh_token';
-  static const String _userIdKey = 'user_id';
-
-  // 토큰 갱신 중복 방지를 위한 플래그
-  bool _isRefreshing = false;
-  // 토큰 갱신 대기열
-  final List<Completer<void>> _refreshQueue = [];
-
-  // 토큰 저장
-  Future<void> _saveTokens({
-    required String accessToken,
-    required String refreshToken,
-    required String userId,
-  }) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(_accessTokenKey, accessToken);
-    await prefs.setString(_refreshTokenKey, refreshToken);
-    await prefs.setString(_userIdKey, userId);
+  AuthService(this.dio);
+  Map<String, dynamic> decodeJWT(String token) {
+    return JwtDecoder.decode(token);
   }
 
-  // 토큰 삭제
-  Future<void> _clearTokens() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.remove(_accessTokenKey);
-    await prefs.remove(_refreshTokenKey);
-    await prefs.remove(_userIdKey);
-  }
-
-  // 로그인
-  Future<bool> login(String email, String password) async {
-    try {
-      final response = await _dio.post('/login', data: {
+  //로그인
+  Future<void> login(String email, String password) async {
+    final response = await dio.post(
+      '/login',
+      data: {
         'email': email,
         'password': password,
-      });
+      },
+    );
 
-      if (response.statusCode == 200) {
-        await _saveTokens(
-          accessToken: response.data['accessToken'],
-          refreshToken: response.data['refreshToken'],
-          userId: response.data['userId'],
-        );
-        return true;
-      }
-      return false;
-    } catch (e) {
-      print('Login error: $e');
-      return false;
-    }
-  }
+    final accessToken = response.data['accessToken'];
+    final refreshToken = response.data['refreshToken'];
 
-  // 토큰 갱신
-  Future<bool> refreshToken() async {
-    // 이미 갱신 중이면 대기열에 추가
-    if (_isRefreshing) {
-      final completer = Completer<void>();
-      _refreshQueue.add(completer);
-      await completer.future;
-      return true;
-    }
-
-    try {
-      _isRefreshing = true;
-      final prefs = await SharedPreferences.getInstance();
-      final refreshToken = prefs.getString(_refreshTokenKey);
-
-      if (refreshToken == null) {
-        _handleRefreshFailure();
-        return false;
-      }
-
-      final response = await _dio.post('/refresh', data: {
-        'refreshToken': refreshToken,
-      });
-
-      if (response.statusCode == 200) {
-        await _saveTokens(
-          accessToken: response.data['accessToken'],
-          refreshToken: response.data['refreshToken'],
-          userId: response.data['userId'],
-        );
-        _handleRefreshSuccess();
-        return true;
-      }
-
-      _handleRefreshFailure();
-      return false;
-    } catch (e) {
-      print('Token refresh error: $e');
-      _handleRefreshFailure();
-      return false;
-    }
-  }
-
-  // 토큰 갱신 성공 처리
-  void _handleRefreshSuccess() {
-    _isRefreshing = false;
-    // 대기 중인 모든 요청 완료 처리
-    for (var completer in _refreshQueue) {
-      completer.complete();
-    }
-    _refreshQueue.clear();
-  }
-
-  // 토큰 갱신 실패 처리
-  void _handleRefreshFailure() {
-    _isRefreshing = false;
-    // 대기 중인 모든 요청 실패 처리
-    for (var completer in _refreshQueue) {
-      completer.completeError('Token refresh failed');
-    }
-    _refreshQueue.clear();
-    // 토큰 삭제
-    _clearTokens();
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('accessToken', accessToken);
+    await prefs.setString('refreshToken', refreshToken);
   }
 
   // 로그아웃
-  Future<void> logout() async {
-    await _clearTokens();
-  }
+  Future<void> logout(String refreshToken) async {
+    final response = await dio.post(
+      '/logout',
+      data: {'refreshToken': refreshToken},
+    );
 
-  // 로그인 상태 확인
-  Future<bool> isLoggedIn() async {
     final prefs = await SharedPreferences.getInstance();
-    return prefs.getString(_accessTokenKey) != null;
+    await prefs.remove('accessToken');
+    await prefs.remove('refreshToken');
   }
 
-  // 액세스 토큰 가져오기
-  Future<String?> getAccessToken() async {
+  // User ID값 받아오기
+  Future<int> getProfile() async {
     final prefs = await SharedPreferences.getInstance();
-    return prefs.getString(_accessTokenKey);
+    final accessToken = prefs.getString('accessToken');
+    //로그인 안했을경우 user_id는 -1을 반환
+    if (accessToken == null) return -1;
+
+    final payload = decodeJWT(accessToken);
+    final userId = payload['user_id'];
+    return userId;
   }
 
-  // 리프레시 토큰 가져오기
-  Future<String?> getRefreshToken() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getString(_refreshTokenKey);
-  }
-
+  //회원가입
   Future<bool> register(String email, String password, String name) async {
     try {
-      final response = await _dio.post('/register', data: {
+      final response = await dio.post('/register', data: {
         'email': email,
         'password': password,
-        'name': name,
+        ' name': name,
       });
 
       return response.statusCode == 201;

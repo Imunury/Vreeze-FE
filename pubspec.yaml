@@ -42,7 +42,9 @@ dependencies:
   kakao_flutter_sdk: ^1.9.7+3
   dio: ^5.8.0+1
   shared_preferences: ^2.5.3
-
+  flutter_dotenv: ^5.2.1
+  jwt_decoder: ^2.0.1
+  
 dev_dependencies:
   flutter_test:
     sdk: flutter
