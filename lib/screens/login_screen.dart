@@ -2,26 +2,22 @@ import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import '../widgets/sidebar_widget.dart';
+import '../services/auth_service.dart';
 
 class LoginScreen extends StatefulWidget {
-  const LoginScreen({Key? key}) : super(key: key);
+  const LoginScreen({super.key});
 
   @override
-  _LoginScreenState createState() => _LoginScreenState();
+  State<LoginScreen> createState() => _LoginScreenState();
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  final _formKey = GlobalKey<FormState>();
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+  final _authService = AuthService();
+  bool _isLoading = false;
   Color backgroundColor = Colors.black;
-  final List<Color> colorList = [
-    Colors.red,
-    Colors.green,
-    Colors.blue,
-    Colors.orange,
-    Colors.purple,
-    Colors.teal,
-    Colors.yellow,
-    Colors.pink,
-  ];
   late Timer _timer;
   final Random _random = Random();
 
@@ -39,7 +35,41 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   void dispose() {
     _timer.cancel();
+    _emailController.dispose();
+    _passwordController.dispose();
     super.dispose();
+  }
+
+  final List<Color> colorList = [
+    Colors.red,
+    Colors.green,
+    Colors.blue,
+    Colors.orange,
+    Colors.purple,
+    Colors.teal,
+    Colors.yellow,
+    Colors.pink,
+  ];
+
+  Future<void> _login() async {
+    if (_formKey.currentState!.validate()) {
+      setState(() => _isLoading = true);
+
+      final success = await _authService.login(
+        _emailController.text,
+        _passwordController.text,
+      );
+
+      setState(() => _isLoading = false);
+
+      if (success && mounted) {
+        Navigator.pushReplacementNamed(context, '/home');
+      } else if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('로그인에 실패했습니다.')),
+        );
+      }
+    }
   }
 
   // 하단 패널의 각 버튼 생성 함수 (아이콘 추가)
@@ -52,7 +82,8 @@ class _LoginScreenState extends State<LoginScreen> {
       child: ElevatedButton(
         onPressed: () {
           if (text == "전화번호로 계속하기") {
-            Navigator.pushNamed(context, '/chat'); // "로그인" 버튼 클릭 시 /chat으로 이동
+            //Navigator.pushNamed(context, '/chat'); // "로그인" 버튼 클릭 시 /chat으로 이동
+            _login();
           }
           // 다른 버튼은 추후 기능 추가 가능
         },
@@ -150,6 +181,8 @@ class _LoginScreenState extends State<LoginScreen> {
                       bottomPanelHeight,
                       "/img/login_phone.png",
                     ),
+                    if (_isLoading)
+                      const CircularProgressIndicator(color: Colors.white),
                   ],
                 ),
               ),

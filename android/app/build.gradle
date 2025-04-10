@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.cctv_flutter"
+    namespace = "com.example.vreeze"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
@@ -20,9 +20,9 @@ android {
     }
 
     defaultConfig {
-        namespace "com.example.cctv_flutter"
+        namespace "com.example.vreeze"
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId "com.example.cctv_flutter"
+        applicationId "com.example.vreeze"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdkVersion 23
@@ -37,6 +37,11 @@ android {
                 arguments = ['dagger.gradle.incremental': 'true']
             }
         }
+
+        applicationId "com.example.vreeze"
+        manifestPlaceholders = [
+                googleClientId: "웹 클라이언트 ID"
+        ]
     }
 
     buildTypes {

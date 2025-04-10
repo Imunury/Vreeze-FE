@@ -6,10 +6,10 @@ class RecordVoiceScreen extends StatefulWidget {
   const RecordVoiceScreen({super.key});
 
   @override
-  _RecordVoiceScreenState createState() => _RecordVoiceScreenState();
+  RecordVoiceScreenState createState() => RecordVoiceScreenState();
 }
 
-class _RecordVoiceScreenState extends State<RecordVoiceScreen> {
+class RecordVoiceScreenState extends State<RecordVoiceScreen> {
   List<Map<String, String>> allTexts = [];
   List<Map<String, String>> displayedTexts = [];
   int currentPage = 1;
@@ -28,12 +28,12 @@ class _RecordVoiceScreenState extends State<RecordVoiceScreen> {
 
       List<Map<String, String>> parsedTexts = jsonList
           .where((item) =>
-      int.tryParse(item["ID"] ?? '0') != null &&
-          int.parse(item["ID"]) <= 100)
+              int.tryParse(item["ID"] ?? '0') != null &&
+              int.parse(item["ID"]) <= 100)
           .map<Map<String, String>>((item) => {
-        "ID": item["ID"].toString(),
-        "text": item["text"].toString(),
-      })
+                "ID": item["ID"].toString(),
+                "text": item["text"].toString(),
+              })
           .toList();
 
       setState(() {
@@ -81,19 +81,19 @@ class _RecordVoiceScreenState extends State<RecordVoiceScreen> {
           child: ListView(
             children: displayedTexts
                 .map((item) => Padding(
-              padding: const EdgeInsets.only(
-                  left: 20, right: 20, top: 5, bottom: 5),
-              child: Text(
-                '${item["ID"]}. ${item["text"]}',
-                style: const TextStyle(
-                  fontSize: 18,
-                  color: Colors.white,
-                  letterSpacing: -0.5,
-                ),
-                textAlign: TextAlign.left,
-                softWrap: true,
-              ),
-            ))
+                      padding: const EdgeInsets.only(
+                          left: 20, right: 20, top: 5, bottom: 5),
+                      child: Text(
+                        '${item["ID"]}. ${item["text"]}',
+                        style: const TextStyle(
+                          fontSize: 18,
+                          color: Colors.white,
+                          letterSpacing: -0.5,
+                        ),
+                        textAlign: TextAlign.left,
+                        softWrap: true,
+                      ),
+                    ))
                 .toList(),
           ),
         ),
@@ -111,8 +111,9 @@ class _RecordVoiceScreenState extends State<RecordVoiceScreen> {
                 style: const TextStyle(color: Colors.white, fontSize: 16),
               ),
               ElevatedButton(
-                onPressed:
-                currentPage * itemsPerPage < allTexts.length ? nextPage : null,
+                onPressed: currentPage * itemsPerPage < allTexts.length
+                    ? nextPage
+                    : null,
                 child: const Text("다음"),
               ),
             ],

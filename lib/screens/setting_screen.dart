@@ -22,11 +22,10 @@ class SettingScreen extends StatelessWidget {
       margin: const EdgeInsets.symmetric(vertical: 8),
       child: ListTile(
         leading: Icon(icon, size: 28),
-        title: Text(title, style: const TextStyle(fontSize: 18, color: Colors.white70)),
+        title: Text(title,
+            style: const TextStyle(fontSize: 18, color: Colors.white70)),
         trailing: const Icon(Icons.arrow_forward_ios, size: 18),
-        onTap: () {
-          // TODO: 클릭 시 이동할 화면 추가 가능
-        },
+        onTap: () {},
       ),
     );
   }

@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 
 class ChatVoiceScreen extends StatefulWidget {
+  const ChatVoiceScreen({super.key});
+
   @override
-  _ChatVoiceScreenState createState() => _ChatVoiceScreenState();
+  ChatVoiceScreenState createState() => ChatVoiceScreenState();
 }
 
-class _ChatVoiceScreenState extends State<ChatVoiceScreen> {
+class ChatVoiceScreenState extends State<ChatVoiceScreen> {
   bool isRecording = false; // 녹음 상태 변수
 
   @override
