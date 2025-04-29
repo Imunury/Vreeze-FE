@@ -33,16 +33,17 @@ dependencies:
   record: ^5.2.1
   audioplayers: ^6.2.0 # 최신 버전 확인 후 사용
   card_swiper : ^3.0.1
+  firebase_core: ^2.27.1
+  firebase_auth: ^4.17.9
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
   flutter_naver_login: ^2.0.0
   google_sign_in: ^6.3.0
-  kakao_flutter_sdk: ^1.9.7+3
   dio: ^5.8.0+1
   shared_preferences: ^2.5.3
-  flutter_dotenv: ^5.2.1
+  flutter_dotenv: ^5.1.0
   jwt_decoder: ^2.0.1
   
 dev_dependencies:
@@ -65,8 +66,9 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
-  assets :
-    - assets/
+  assets:
+    - assets/img/
+    - assets/utils/
 
   # To add assets to your application, add an assets section, like this:
   # assets:

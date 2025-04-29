@@ -1,6 +1,4 @@
 import 'package:dio/dio.dart';
-import 'package:dio/dio.dart';
-import 'package:breeze/cores/dio_client.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 
@@ -32,7 +30,7 @@ class AuthService {
 
   // 로그아웃
   Future<void> logout(String refreshToken) async {
-    final response = await dio.post(
+    await dio.post(
       '/logout',
       data: {'refreshToken': refreshToken},
     );

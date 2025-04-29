@@ -1,7 +1,8 @@
 import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
-import '../widgets/sidebar_widget.dart';
+import 'package:dio/dio.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import '../services/auth_service.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -15,7 +16,11 @@ class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  final _authService = AuthService();
+  final _authService = AuthService(Dio(BaseOptions(
+    baseUrl: dotenv.env['API_BASE_URL'] ?? 'https://api.example.com',
+    connectTimeout: const Duration(seconds: 5),
+    receiveTimeout: const Duration(seconds: 3),
+  )));
   bool _isLoading = false;
   Color backgroundColor = Colors.black;
   late Timer _timer;
@@ -55,19 +60,24 @@ class _LoginScreenState extends State<LoginScreen> {
     if (_formKey.currentState!.validate()) {
       setState(() => _isLoading = true);
 
-      final success = await _authService.login(
-        _emailController.text,
-        _passwordController.text,
-      );
-
-      setState(() => _isLoading = false);
-
-      if (success && mounted) {
-        Navigator.pushReplacementNamed(context, '/home');
-      } else if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('로그인에 실패했습니다.')),
+      try {
+        await _authService.login(
+          _emailController.text,
+          _passwordController.text,
         );
+        if (mounted) {
+          Navigator.pushReplacementNamed(context, '/home');
+        }
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('로그인에 실패했습니다.')),
+          );
+        }
+      } finally {
+        if (mounted) {
+          setState(() => _isLoading = false);
+        }
       }
     }
   }
@@ -82,10 +92,8 @@ class _LoginScreenState extends State<LoginScreen> {
       child: ElevatedButton(
         onPressed: () {
           if (text == "전화번호로 계속하기") {
-            //Navigator.pushNamed(context, '/chat'); // "로그인" 버튼 클릭 시 /chat으로 이동
-            _login();
+            Navigator.pushNamed(context, '/phone_auth'); // 바로 이동
           }
-          // 다른 버튼은 추후 기능 추가 가능
         },
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.black, // 버튼 배경: 검은색
@@ -97,7 +105,16 @@ class _LoginScreenState extends State<LoginScreen> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Image.asset(icon, width: 24, height: 24), // 아이콘 추가
+            Builder(
+              builder: (context) {
+                try {
+                  return Image.asset('assets/$icon', width: 24, height: 24);
+                } catch (e) {
+                  print('이미지 로딩 오류: $e');
+                  return const Icon(Icons.error, color: Colors.white, size: 24);
+                }
+              },
+            ),
             const SizedBox(width: 10),
             Text(
               text,
@@ -119,21 +136,20 @@ class _LoginScreenState extends State<LoginScreen> {
     final bottomPanelHeight = screenSize.height * 0.35; // 하단 패널 높이: 화면의 35%
 
     return Scaffold(
-      drawer: const SideBar(),
       body: AnimatedContainer(
         duration: const Duration(seconds: 2),
         color: backgroundColor,
         child: Stack(
           children: [
             // 중앙에 "Vreeze" 텍스트 (약간 위쪽으로 올림)
-            Align(
-              alignment: const Alignment(0, -0.3),
-              child: const Text(
+            const Align(
+              alignment: Alignment(0, -0.3),
+              child: Text(
                 "Vreeze",
                 style: TextStyle(
                   fontSize: 40,
                   fontWeight: FontWeight.bold,
-                  color: Colors.black,
+                  color: Colors.white,
                 ),
               ),
             ),
@@ -158,28 +174,28 @@ class _LoginScreenState extends State<LoginScreen> {
                       context,
                       "카카오톡으로 계속하기",
                       bottomPanelHeight,
-                      "/img/login_kakao.png",
+                      "img/login_kakao.png",
                     ),
                     const SizedBox(height: 12),
                     _buildBottomButton(
                       context,
                       "네이버로 계속하기",
                       bottomPanelHeight,
-                      "/img/login_naver.png",
+                      "img/login_naver.png",
                     ),
                     const SizedBox(height: 12),
                     _buildBottomButton(
                       context,
                       "Google로 계속하기",
                       bottomPanelHeight,
-                      "/img/login_google.png",
+                      "img/login_google.png",
                     ),
                     const SizedBox(height: 12),
                     _buildBottomButton(
                       context,
                       "전화번호로 계속하기",
                       bottomPanelHeight,
-                      "/img/login_phone.png",
+                      "img/login_phone.png",
                     ),
                     if (_isLoading)
                       const CircularProgressIndicator(color: Colors.white),
