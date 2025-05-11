@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:record/record.dart';
+import 'package:path_provider/path_provider.dart';
+import 'dart:io';
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({super.key});
@@ -11,6 +14,8 @@ class ChatScreenState extends State<ChatScreen> {
   final TextEditingController _messageController = TextEditingController();
   final List<Map<String, String>> messages = [];
   final FocusNode _focusNode = FocusNode(); // FocusNode 추가
+  final record = AudioRecorder();
+  bool _isRecording = false;
 
   // 텍스트 메시지 전송 함수
   void _sendMessage() {
@@ -23,10 +28,37 @@ class ChatScreenState extends State<ChatScreen> {
     }
   }
 
+  void _toggleRecording() async {
+    if (await record.hasPermission()) {
+      if (_isRecording) {
+        final path = await record.stop();
+        setState(() {
+          messages.add({"user": "🎤 녹음 저장됨: ${path?.split('/').last}"});
+        });
+      } else {
+        final dir = await getApplicationDocumentsDirectory();
+        final filePath =
+            '${dir.path}/voice_${DateTime.now().millisecondsSinceEpoch}.m4a';
+
+        await record.start(const RecordConfig(), path: filePath); // ← 여기 수정
+      }
+
+      setState(() {
+        _isRecording = !_isRecording;
+      });
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("마이크 권한이 필요합니다.")),
+      );
+    }
+  }
+
   @override
   void dispose() {
     _messageController.dispose();
     _focusNode.dispose(); // FocusNode도 해제
+    record.dispose();
+
     super.dispose();
   }
 
@@ -64,7 +96,6 @@ class ChatScreenState extends State<ChatScreen> {
             },
           ),
         ),
-        // 하단 입력창과 전송 버튼 (녹음 기능 제거)
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
           decoration: BoxDecoration(
@@ -102,7 +133,7 @@ class ChatScreenState extends State<ChatScreen> {
                   color: Colors.green.shade400,
                   size: 18,
                 ),
-                onPressed: _sendMessage,
+                onPressed: _toggleRecording,
                 style: IconButton.styleFrom(
                   backgroundColor: Colors.white,
                   shape: CircleBorder(),
