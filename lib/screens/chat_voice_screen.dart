@@ -7,8 +7,25 @@ class ChatVoiceScreen extends StatefulWidget {
   ChatVoiceScreenState createState() => ChatVoiceScreenState();
 }
 
-class ChatVoiceScreenState extends State<ChatVoiceScreen> {
-  bool isRecording = false; // 녹음 상태 변수
+class ChatVoiceScreenState extends State<ChatVoiceScreen>
+    with SingleTickerProviderStateMixin {
+  bool isRecording = false;
+  late AnimationController _colorController;
+
+  @override
+  void initState() {
+    super.initState();
+    _colorController = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 6),
+    )..repeat();
+  }
+
+  @override
+  void dispose() {
+    _colorController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -16,18 +33,24 @@ class ChatVoiceScreenState extends State<ChatVoiceScreen> {
       backgroundColor: Colors.black,
       body: Stack(
         children: [
-          // 중앙 구체
           Center(
-            child: Container(
-              width: 200,
-              height: 200,
-              decoration: BoxDecoration(
-                color: Colors.green.shade400,
-                shape: BoxShape.circle,
+            child: ClipOval(
+              child: SizedBox(
+                width: 200,
+                height: 200,
+                child: AnimatedBuilder(
+                  animation: _colorController,
+                  builder: (context, child) {
+                    return CustomPaint(
+                      painter: DiagonalGreenGradientPainter(
+                        offset: _colorController.value,
+                      ),
+                    );
+                  },
+                ),
               ),
             ),
           ),
-          // 왼쪽 하단 버튼 (녹음 버튼)
           Positioned(
             bottom: 50,
             left: 50,
@@ -38,8 +61,8 @@ class ChatVoiceScreenState extends State<ChatVoiceScreen> {
                 });
               },
               style: ElevatedButton.styleFrom(
-                shape: CircleBorder(),
-                padding: EdgeInsets.all(30),
+                shape: const CircleBorder(),
+                padding: const EdgeInsets.all(30),
                 backgroundColor: Colors.white,
               ),
               child: Icon(
@@ -48,20 +71,19 @@ class ChatVoiceScreenState extends State<ChatVoiceScreen> {
               ),
             ),
           ),
-          // 오른쪽 하단 버튼 (예: 뒤로 가기)
           Positioned(
             bottom: 50,
             right: 50,
             child: ElevatedButton(
               onPressed: () {
-                Navigator.pop(context); // 뒤로 가기
+                Navigator.pop(context);
               },
               style: ElevatedButton.styleFrom(
-                shape: CircleBorder(),
-                padding: EdgeInsets.all(30),
+                shape: const CircleBorder(),
+                padding: const EdgeInsets.all(30),
                 backgroundColor: Colors.white,
               ),
-              child: Icon(Icons.close, color: Colors.black),
+              child: const Icon(Icons.close, color: Colors.black),
             ),
           ),
         ],
@@ -69,3 +91,37 @@ class ChatVoiceScreenState extends State<ChatVoiceScreen> {
     );
   }
 }
+
+class DiagonalGreenGradientPainter extends CustomPainter {
+  final double offset;
+
+  DiagonalGreenGradientPainter({required this.offset});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final rect = Offset.zero & size;
+
+    final paint = Paint()
+      ..shader = LinearGradient(
+        begin: Alignment(-1.0 + offset * 2, -1.0 + offset * 2),
+        end: Alignment(1.0 + offset * 2, 1.0 + offset * 2),
+        colors: [
+          Colors.green.shade400,
+          Colors.green.shade300,
+          Colors.green.shade200,
+          Colors.green.shade300,
+          Colors.green.shade400,
+        ],
+        stops: const [0.0, 0.25, 0.5, 0.75, 1.0],
+        tileMode: TileMode.mirror,
+      ).createShader(rect);
+
+    canvas.drawRect(rect, paint);
+  }
+
+  @override
+  bool shouldRepaint(covariant DiagonalGreenGradientPainter oldDelegate) {
+    return oldDelegate.offset != offset;
+  }
+}
+
