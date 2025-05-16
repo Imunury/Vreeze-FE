@@ -8,22 +8,32 @@ class ChatVoiceScreen extends StatefulWidget {
 }
 
 class ChatVoiceScreenState extends State<ChatVoiceScreen>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   bool isRecording = false;
   late AnimationController _colorController;
+  late AnimationController _waveController;
 
   @override
   void initState() {
     super.initState();
+
     _colorController = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 6),
     )..repeat();
+
+    _waveController = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 1),
+      lowerBound: 0.0,
+      upperBound: 1.0,
+    )..repeat(); // 기본적으로 반복
   }
 
   @override
   void dispose() {
     _colorController.dispose();
+    _waveController.dispose();
     super.dispose();
   }
 
@@ -34,21 +44,38 @@ class ChatVoiceScreenState extends State<ChatVoiceScreen>
       body: Stack(
         children: [
           Center(
-            child: ClipOval(
-              child: SizedBox(
-                width: 200,
-                height: 200,
-                child: AnimatedBuilder(
-                  animation: _colorController,
-                  builder: (context, child) {
-                    return CustomPaint(
-                      painter: DiagonalGreenGradientPainter(
-                        offset: _colorController.value,
-                      ),
-                    );
-                  },
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                // 파형
+                if (isRecording)
+                  AnimatedBuilder(
+                    animation: _waveController,
+                    builder: (context, child) {
+                      return CustomPaint(
+                        size: const Size(220, 220),
+                        painter: WaveCirclePainter(_waveController.value),
+                      );
+                    },
+                  ),
+                // 구체
+                ClipOval(
+                  child: SizedBox(
+                    width: 200,
+                    height: 200,
+                    child: AnimatedBuilder(
+                      animation: _colorController,
+                      builder: (context, child) {
+                        return CustomPaint(
+                          painter: DiagonalGreenGradientPainter(
+                            offset: _colorController.value,
+                          ),
+                        );
+                      },
+                    ),
+                  ),
                 ),
-              ),
+              ],
             ),
           ),
           Positioned(
@@ -125,3 +152,27 @@ class DiagonalGreenGradientPainter extends CustomPainter {
   }
 }
 
+class WaveCirclePainter extends CustomPainter {
+  final double progress;
+
+  WaveCirclePainter(this.progress);
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final center = size.center(Offset.zero);
+    final maxRadius = size.width * 0.5;
+
+    final paint = Paint()
+      ..color = Colors.greenAccent.withOpacity(1.0 - progress)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 4;
+
+    final currentRadius = maxRadius * progress;
+    canvas.drawCircle(center, currentRadius, paint);
+  }
+
+  @override
+  bool shouldRepaint(covariant WaveCirclePainter oldDelegate) {
+    return oldDelegate.progress != progress;
+  }
+}

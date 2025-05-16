@@ -28,7 +28,7 @@ class ChatScreenState extends State<ChatScreen> {
     }
   }
 
-  void _toggleRecording() async {
+  Future<void> _toggleRecording() async {
     if (await record.hasPermission()) {
       if (_isRecording) {
         final path = await record.stop();
@@ -146,9 +146,9 @@ class ChatScreenState extends State<ChatScreen> {
                   color: Colors.green.shade400,
                   size: 18,
                 ),
-                onPressed: () {
-                  Navigator.pushNamed(
-                      context, '/chat_voice'); // '/chat_voice' 화면으로 이동
+                onPressed: () async {
+                  await _toggleRecording(); // 녹음 토글 수행
+                  Navigator.pushNamed(context, '/chat_voice'); // 화면 이동
                 },
                 style: IconButton.styleFrom(
                   backgroundColor: Colors.white, // 아이콘 버튼 배경을 흰색으로 설정
