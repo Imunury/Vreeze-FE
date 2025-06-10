@@ -33,7 +33,7 @@ class ChatScreenState extends State<ChatScreen> {
       if (_isRecording) {
         final path = await record.stop();
         setState(() {
-          messages.add({"user": "🎤 녹음 저장됨: ${path?.split('/').last}"});
+          messages.add({"user": "🎤 녹음 저장됨: $path"});
         });
       } else {
         final dir = await getApplicationDocumentsDirectory();
