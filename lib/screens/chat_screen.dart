@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:record/record.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:just_audio/just_audio.dart';
 import 'dart:io';
 
 class ChatScreen extends StatefulWidget {
@@ -12,10 +13,12 @@ class ChatScreen extends StatefulWidget {
 
 class ChatScreenState extends State<ChatScreen> {
   final TextEditingController _messageController = TextEditingController();
-  final List<Map<String, String>> messages = [];
-  final FocusNode _focusNode = FocusNode(); // FocusNode 추가
+  final List<Map<String, dynamic>> messages = [];
+  final FocusNode _focusNode = FocusNode();
   final record = AudioRecorder();
+  final audioPlayer = AudioPlayer();
   bool _isRecording = false;
+  String? _currentlyPlayingPath;
 
   // 텍스트 메시지 전송 함수
   void _sendMessage() {
@@ -33,14 +36,18 @@ class ChatScreenState extends State<ChatScreen> {
       if (_isRecording) {
         final path = await record.stop();
         setState(() {
-          messages.add({"user": "🎤 녹음 저장됨: ${path?.split('/').last}"});
+          messages.add({
+            "type": "voice",
+            "path": path,
+            "filename": path?.split('/').last
+          });
         });
       } else {
         final dir = await getApplicationDocumentsDirectory();
         final filePath =
             '${dir.path}/voice_${DateTime.now().millisecondsSinceEpoch}.m4a';
 
-        await record.start(const RecordConfig(), path: filePath); // ← 여기 수정
+        await record.start(const RecordConfig(), path: filePath);
       }
 
       setState(() {
@@ -53,12 +60,41 @@ class ChatScreenState extends State<ChatScreen> {
     }
   }
 
+  Future<void> _playVoiceMessage(String path) async {
+    if (_currentlyPlayingPath == path) {
+      await audioPlayer.stop();
+      setState(() {
+        _currentlyPlayingPath = null;
+      });
+    } else {
+      try {
+        await audioPlayer.setFilePath(path);
+        await audioPlayer.play();
+        setState(() {
+          _currentlyPlayingPath = path;
+        });
+
+        audioPlayer.playerStateStream.listen((state) {
+          if (state.processingState == ProcessingState.completed) {
+            setState(() {
+              _currentlyPlayingPath = null;
+            });
+          }
+        });
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("오디오 재생 중 오류가 발생했습니다.")),
+        );
+      }
+    }
+  }
+
   @override
   void dispose() {
     _messageController.dispose();
-    _focusNode.dispose(); // FocusNode도 해제
+    _focusNode.dispose();
     record.dispose();
-
+    audioPlayer.dispose();
     super.dispose();
   }
 
@@ -66,7 +102,6 @@ class ChatScreenState extends State<ChatScreen> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        // 채팅 메시지 리스트
         Expanded(
           child: ListView.builder(
             padding: const EdgeInsets.all(16),
@@ -74,6 +109,39 @@ class ChatScreenState extends State<ChatScreen> {
             itemBuilder: (context, index) {
               final message = messages[index];
               final isUser = message.containsKey("user");
+
+              if (message["type"] == "voice") {
+                return Align(
+                  alignment: Alignment.centerRight,
+                  child: Container(
+                    margin: const EdgeInsets.symmetric(vertical: 4),
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: Colors.green.shade400,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        IconButton(
+                          icon: Icon(
+                            _currentlyPlayingPath == message["path"]
+                                ? Icons.stop
+                                : Icons.play_arrow,
+                            color: Colors.white,
+                          ),
+                          onPressed: () => _playVoiceMessage(message["path"]),
+                        ),
+                        Text(
+                          message["filename"] ?? "음성 메시지",
+                          style: const TextStyle(color: Colors.white),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              }
+
               final messageText = message.values.first;
               return Align(
                 alignment:
