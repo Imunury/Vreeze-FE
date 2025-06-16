@@ -12,19 +12,23 @@ class ChatScreen extends StatefulWidget {
 
 class ChatScreenState extends State<ChatScreen> {
   final TextEditingController _messageController = TextEditingController();
-  final List<Map<String, String>> messages = [];
-  final FocusNode _focusNode = FocusNode(); // FocusNode 추가
+  final FocusNode _focusNode = FocusNode();
+  final List<Map<String, dynamic>> _messages = [];
   final record = AudioRecorder();
   bool _isRecording = false;
 
   // 텍스트 메시지 전송 함수
   void _sendMessage() {
-    if (_messageController.text.isNotEmpty) {
+    if (_messageController.text.trim().isNotEmpty) {
       setState(() {
-        messages.add({"user": _messageController.text});
-        messages.add({"bot": "Hello world"});
+        _messages.add({
+          'text': _messageController.text,
+          'isUser': true,
+          'timestamp': DateTime.now(),
+        });
+        _messages.add({"bot": "Hello world"});
+        _messageController.clear();
       });
-      _messageController.clear();
     }
   }
 
@@ -33,7 +37,7 @@ class ChatScreenState extends State<ChatScreen> {
       if (_isRecording) {
         final path = await record.stop();
         setState(() {
-          messages.add({"user": "🎤 녹음 저장됨: $path"});
+          _messages.add({"user": "🎤 녹음 저장됨: $path"});
         });
       } else {
         final dir = await getApplicationDocumentsDirectory();
@@ -64,102 +68,133 @@ class ChatScreenState extends State<ChatScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        // 채팅 메시지 리스트
-        Expanded(
-          child: ListView.builder(
-            padding: const EdgeInsets.all(16),
-            itemCount: messages.length,
-            itemBuilder: (context, index) {
-              final message = messages[index];
-              final isUser = message.containsKey("user");
-              final messageText = message.values.first;
-              return Align(
-                alignment:
-                    isUser ? Alignment.centerRight : Alignment.centerLeft,
-                child: Container(
-                  margin: const EdgeInsets.symmetric(vertical: 4),
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: isUser ? Colors.green.shade400 : Colors.white,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Text(
-                    messageText,
-                    style: TextStyle(
-                      color: isUser ? Colors.white : Colors.black87,
+    return Scaffold(
+      backgroundColor: Color(0xFF1A1A1A),
+      body: Column(
+        children: [
+          Expanded(
+            child: ListView.builder(
+              padding: EdgeInsets.all(16),
+              itemCount: _messages.length,
+              itemBuilder: (context, index) {
+                final message = _messages[index];
+                return Align(
+                  alignment: message['isUser'] == true
+                      ? Alignment.centerRight
+                      : Alignment.centerLeft,
+                  child: Container(
+                    margin: EdgeInsets.only(bottom: 8),
+                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                    decoration: BoxDecoration(
+                      color: message['isUser'] == true
+                          ? Color(0xFF21A900)
+                          : Colors.white,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Text(
+                      message['text'] ?? '',
+                      style: TextStyle(
+                        color: message['isUser'] == true
+                            ? Colors.white
+                            : Color(0xFF21A900),
+                        fontFamily: 'Pretendard',
+                        fontWeight: FontWeight.w400,
+                      ),
                     ),
                   ),
-                ),
-              );
-            },
+                );
+              },
+            ),
           ),
-        ),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-          decoration: BoxDecoration(
-            color: Colors.black45,
-            border: Border(
-              top: BorderSide(
-                color: Colors.white, // 위쪽 border 색상
-                width: 0.5, // 1px 두께
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            decoration: BoxDecoration(
+              color: Colors.black45,
+              border: Border(
+                top: BorderSide(
+                  color: Colors.white, // 위쪽 border 색상
+                  width: 0.5, // 1px 두께
+                ),
+              ),
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(10), // 상단 왼쪽만 둥글게
+                topRight: Radius.circular(10), // 상단 오른쪽만 둥글게
               ),
             ),
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(10), // 상단 왼쪽만 둥글게
-              topRight: Radius.circular(10), // 상단 오른쪽만 둥글게
-            ),
-          ),
-          child: Row(
-            children: [
-              Expanded(
-                child: TextField(
-                  controller: _messageController,
-                  focusNode: _focusNode, // FocusNode 연결
-                  decoration: const InputDecoration(
-                    hintText: "메시지",
-                    border: InputBorder.none,
+            child: Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: _messageController,
+                    focusNode: _focusNode,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontFamily: 'Pretendard',
+                      fontWeight: FontWeight.w400,
+                    ),
+                    decoration: const InputDecoration(
+                      hintText: "메시지",
+                      hintStyle: TextStyle(
+                        color: Colors.white70,
+                        fontFamily: 'Pretendard',
+                        fontWeight: FontWeight.w400,
+                      ),
+                      border: InputBorder.none,
+                    ),
+                    onTap: () {
+                      FocusScope.of(context).requestFocus(_focusNode);
+                    },
                   ),
-                  onTap: () {
-                    // TextField 터치 시 키보드 자동으로 표시됨
-                    FocusScope.of(context).requestFocus(_focusNode);
+                ),
+                IconButton(
+                  icon: Icon(
+                    Icons.send,
+                    color: Color(0xFF21A900),
+                    size: 18,
+                  ),
+                  onPressed: _sendMessage,
+                  style: IconButton.styleFrom(
+                    backgroundColor: Colors.white,
+                    shape: CircleBorder(),
+                    padding: EdgeInsets.all(2),
+                  ),
+                ),
+                SizedBox(width: 8),
+                IconButton(
+                  icon: Icon(
+                    Icons.mic,
+                    color: Color(0xFF21A900),
+                    size: 18,
+                  ),
+                  onPressed: _toggleRecording,
+                  style: IconButton.styleFrom(
+                    backgroundColor: Colors.white,
+                    shape: CircleBorder(),
+                    padding: EdgeInsets.all(2),
+                  ),
+                ),
+                SizedBox(width: 8),
+                IconButton(
+                  icon: Icon(
+                    Icons.graphic_eq,
+                    color: Color(0xFF21A900),
+                    size: 18,
+                  ),
+                  onPressed: () async {
+                    await _toggleRecording();
+                    Navigator.pushNamed(context, '/chat_voice');
                   },
+                  style: IconButton.styleFrom(
+                    backgroundColor: Colors.white,
+                    shape: CircleBorder(),
+                    padding: EdgeInsets.all(2),
+                  ),
                 ),
-              ),
-              IconButton(
-                icon: Icon(
-                  Icons.mic,
-                  color: Colors.green.shade400,
-                  size: 18,
-                ),
-                onPressed: _toggleRecording,
-                style: IconButton.styleFrom(
-                  backgroundColor: Colors.white,
-                  shape: CircleBorder(),
-                  padding: EdgeInsets.all(8), // 버튼 크기 줄이기
-                ),
-              ),
-              IconButton(
-                icon: Icon(
-                  Icons.graphic_eq,
-                  color: Colors.green.shade400,
-                  size: 18,
-                ),
-                onPressed: () async {
-                  await _toggleRecording(); // 녹음 토글 수행
-                  Navigator.pushNamed(context, '/chat_voice'); // 화면 이동
-                },
-                style: IconButton.styleFrom(
-                  backgroundColor: Colors.white, // 아이콘 버튼 배경을 흰색으로 설정
-                  shape: CircleBorder(), // 원형 버튼 유지
-                  padding: EdgeInsets.all(8), // 버튼 크기 줄이기
-                ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

@@ -47,55 +47,5 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
-
-	<key>LSApplicationQueriesSchemes</key>
-    <array>
-      <string>naversearchapp</string>
-      <string>naversearchthirdlogin</string>
-      <string>naversearchapp_scheme</string>
-    </array>
-
-    <key>CFBundleURLTypes</key>
-    <array>
-      <dict>
-        <key>CFBundleTypeRole</key>
-        <string>Editor</string>
-        <key>CFBundleURLSchemes</key>
-        <array>
-          <string>rnVnuXjA0_fC5lTN_aZ0</string> <!-- 네이버 client id 입력 -->
-        </array>
-      </dict>
-    </array>
-
-    <key>CFBundleURLTypes</key>
-    <array>
-      <dict>
-        <key>CFBundleTypeRole</key>
-        <string>Editor</string>
-        <key>CFBundleURLSchemes</key>
-        <array>
-          <string>GoogleService-Info.plist에 있는 REVERSED_CLIENT_ID</string>
-        </array>
-      </dict>
-    </array>
-
-    <key>LSApplicationQueriesSchemes</key>
-    <array>
-      <string>kakaokompassauth</string>
-      <string>kakaolink</string>
-      <string>kakaotalk</string>
-      <string>kakaostory</string>
-    </array>
-
-    <key>CFBundleURLTypes</key>
-    <array>
-      <dict>
-        <key>CFBundleURLSchemes</key>
-        <array>
-          <string>kakao네이티브앱키</string> <!-- 네이티브 앱 키 -->
-        </array>
-      </dict>
-    </array>
-
 </dict>
 </plist>

@@ -1,4 +1,4 @@
-import 'package:breeze/widgets/header_widget.dart';
+import 'widgets/header_widget.dart';
 import 'package:flutter/material.dart';
 import '../widgets/sidebar_widget.dart';
 

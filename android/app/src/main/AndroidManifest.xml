@@ -2,11 +2,17 @@
 
     <uses-permission android:name="android.permission.RECORD_AUDIO"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_MEDIA_AUDIO"/>
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES"/>
+    <uses-permission android:name="android.permission.READ_MEDIA_VIDEO"/>
 
     <application
         android:label="Vreeze"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/ic_launcher"
+        android:requestLegacyExternalStorage="true"
+        android:preserveLegacyExternalStorage="true">
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -34,18 +40,6 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
-        <meta-data
-            android:name="com.naver.sdk.clientId"
-            android:value="rnVnuXjA0_fC5lTN_aZ0"/>
-        <meta-data
-            android:name="com.naver.sdk.clientSecret"
-            android:value="YYkXyPVhX4"/>
-        <meta-data
-            android:name="com.naver.sdk.clientName"
-            android:value="com.example.vreeze"/>
-        <meta-data
-            android:name="com.kakao.sdk.AppKey"
-            android:value="카카오 네이티브 앱키"/>
     </application>
     <!-- Required to query activities that can process text, see:
          https://developer.android.com/training/package-visibility and
