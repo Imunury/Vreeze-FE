@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:record/record.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:just_audio/just_audio.dart';
-import 'dart:io';
+// import 'dart:io';
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({super.key});
@@ -15,6 +15,7 @@ class ChatScreenState extends State<ChatScreen> {
   final TextEditingController _messageController = TextEditingController();
   final List<Map<String, dynamic>> messages = [];
   final FocusNode _focusNode = FocusNode();
+  final List<Map<String, dynamic>> _messages = [];
   final record = AudioRecorder();
   final audioPlayer = AudioPlayer();
   bool _isRecording = false;
@@ -22,12 +23,16 @@ class ChatScreenState extends State<ChatScreen> {
 
   // 텍스트 메시지 전송 함수
   void _sendMessage() {
-    if (_messageController.text.isNotEmpty) {
+    if (_messageController.text.trim().isNotEmpty) {
       setState(() {
-        messages.add({"user": _messageController.text});
-        messages.add({"bot": "Hello world"});
+        _messages.add({
+          'text': _messageController.text,
+          'isUser': true,
+          'timestamp': DateTime.now(),
+        });
+        _messages.add({"bot": "Hello world"});
+        _messageController.clear();
       });
-      _messageController.clear();
     }
   }
 
@@ -42,6 +47,7 @@ class ChatScreenState extends State<ChatScreen> {
             "filename": path?.split('/').last
           });
           messages.add({"user": "🎤 녹음 저장됨: $path"});
+          _messages.add({"user": "🎤 녹음 저장됨: $path"});
         });
       } else {
         final dir = await getApplicationDocumentsDirectory();
@@ -101,134 +107,163 @@ class ChatScreenState extends State<ChatScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Expanded(
-          child: ListView.builder(
-            padding: const EdgeInsets.all(16),
-            itemCount: messages.length,
-            itemBuilder: (context, index) {
-              final message = messages[index];
-              final isUser = message.containsKey("user");
+    return Scaffold(
+      backgroundColor: Color(0xFF1A1A1A),
+      body: Column(
+        children: [
+          Expanded(
+            child: ListView.builder(
+              padding: EdgeInsets.all(16),
+              itemCount: messages.length,
+              itemBuilder: (context, index) {
+                final message = messages[index];
+                final isUser = message.containsKey("user");
 
-              if (message["type"] == "voice") {
+                if (message["type"] == "voice") {
+                  return Align(
+                    alignment: Alignment.centerRight,
+                    child: Container(
+                      margin: const EdgeInsets.symmetric(vertical: 4),
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: Colors.green.shade400,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          IconButton(
+                            icon: Icon(
+                              _currentlyPlayingPath == message["path"]
+                                  ? Icons.stop
+                                  : Icons.play_arrow,
+                              color: Colors.white,
+                            ),
+                            onPressed: () => _playVoiceMessage(message["path"]),
+                          ),
+                          Text(
+                            message["filename"] ?? "음성 메시지",
+                            style: const TextStyle(color: Colors.white),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                }
+
+                final messageText = message.values.first;
                 return Align(
-                  alignment: Alignment.centerRight,
+                  alignment:
+                      isUser ? Alignment.centerRight : Alignment.centerLeft,
                   child: Container(
                     margin: const EdgeInsets.symmetric(vertical: 4),
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: Colors.green.shade400,
+                      color: isUser ? Colors.green.shade400 : Colors.white,
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        IconButton(
-                          icon: Icon(
-                            _currentlyPlayingPath == message["path"]
-                                ? Icons.stop
-                                : Icons.play_arrow,
-                            color: Colors.white,
-                          ),
-                          onPressed: () => _playVoiceMessage(message["path"]),
-                        ),
-                        Text(
-                          message["filename"] ?? "음성 메시지",
-                          style: const TextStyle(color: Colors.white),
-                        ),
-                      ],
+                    child: Text(
+                      messageText,
+                      style: TextStyle(
+                        color: isUser ? Colors.white : Colors.black87,
+                        fontFamily: 'Pretendard',
+                        fontWeight: FontWeight.w400,
+                      ),
                     ),
                   ),
                 );
-              }
-
-              final messageText = message.values.first;
-              return Align(
-                alignment:
-                    isUser ? Alignment.centerRight : Alignment.centerLeft,
-                child: Container(
-                  margin: const EdgeInsets.symmetric(vertical: 4),
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: isUser ? Colors.green.shade400 : Colors.white,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Text(
-                    messageText,
+              },
+            ),
+          ),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            decoration: BoxDecoration(
+              color: Colors.black45,
+              border: Border(
+                top: BorderSide(
+                  color: Colors.white,
+                  width: 0.5,
+                ),
+              ),
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(10),
+                topRight: Radius.circular(10),
+              ),
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: _messageController,
+                    focusNode: _focusNode,
                     style: TextStyle(
-                      color: isUser ? Colors.white : Colors.black87,
+                      color: Colors.white,
+                      fontFamily: 'Pretendard',
+                      fontWeight: FontWeight.w400,
                     ),
+                    decoration: const InputDecoration(
+                      hintText: "메시지",
+                      hintStyle: TextStyle(
+                        color: Colors.white70,
+                        fontFamily: 'Pretendard',
+                        fontWeight: FontWeight.w400,
+                      ),
+                      border: InputBorder.none,
+                    ),
+                    onTap: () {
+                      FocusScope.of(context).requestFocus(_focusNode);
+                    },
                   ),
                 ),
-              );
-            },
-          ),
-        ),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-          decoration: BoxDecoration(
-            color: Colors.black45,
-            border: Border(
-              top: BorderSide(
-                color: Colors.white, // 위쪽 border 색상
-                width: 0.5, // 1px 두께
-              ),
-            ),
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(10), // 상단 왼쪽만 둥글게
-              topRight: Radius.circular(10), // 상단 오른쪽만 둥글게
-            ),
-          ),
-          child: Row(
-            children: [
-              Expanded(
-                child: TextField(
-                  controller: _messageController,
-                  focusNode: _focusNode, // FocusNode 연결
-                  decoration: const InputDecoration(
-                    hintText: "메시지",
-                    border: InputBorder.none,
+                IconButton(
+                  icon: Icon(
+                    Icons.send,
+                    color: Color(0xFF21A900),
+                    size: 18,
                   ),
-                  onTap: () {
-                    // TextField 터치 시 키보드 자동으로 표시됨
-                    FocusScope.of(context).requestFocus(_focusNode);
+                  onPressed: _sendMessage,
+                  style: IconButton.styleFrom(
+                    backgroundColor: Colors.white,
+                    shape: CircleBorder(),
+                    padding: EdgeInsets.all(2),
+                  ),
+                ),
+                SizedBox(width: 8),
+                IconButton(
+                  icon: Icon(
+                    Icons.mic,
+                    color: Color(0xFF21A900),
+                    size: 18,
+                  ),
+                  onPressed: _toggleRecording,
+                  style: IconButton.styleFrom(
+                    backgroundColor: Colors.white,
+                    shape: CircleBorder(),
+                    padding: EdgeInsets.all(2),
+                  ),
+                ),
+                SizedBox(width: 8),
+                IconButton(
+                  icon: Icon(
+                    Icons.graphic_eq,
+                    color: Color(0xFF21A900),
+                    size: 18,
+                  ),
+                  onPressed: () async {
+                    await _toggleRecording();
+                    Navigator.pushNamed(context, '/chat_voice');
                   },
+                  style: IconButton.styleFrom(
+                    backgroundColor: Colors.white,
+                    shape: CircleBorder(),
+                    padding: EdgeInsets.all(2),
+                  ),
                 ),
-              ),
-              IconButton(
-                icon: Icon(
-                  Icons.mic,
-                  color: Colors.green.shade400,
-                  size: 18,
-                ),
-                onPressed: _toggleRecording,
-                style: IconButton.styleFrom(
-                  backgroundColor: Colors.white,
-                  shape: CircleBorder(),
-                  padding: EdgeInsets.all(8), // 버튼 크기 줄이기
-                ),
-              ),
-              IconButton(
-                icon: Icon(
-                  Icons.graphic_eq,
-                  color: Colors.green.shade400,
-                  size: 18,
-                ),
-                onPressed: () async {
-                  await _toggleRecording(); // 녹음 토글 수행
-                  Navigator.pushNamed(context, '/chat_voice'); // 화면 이동
-                },
-                style: IconButton.styleFrom(
-                  backgroundColor: Colors.white, // 아이콘 버튼 배경을 흰색으로 설정
-                  shape: CircleBorder(), // 원형 버튼 유지
-                  padding: EdgeInsets.all(8), // 버튼 크기 줄이기
-                ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

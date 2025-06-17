@@ -94,7 +94,7 @@ class ChatVoiceScreenState extends State<ChatVoiceScreen>
               ),
               child: Icon(
                 isRecording ? Icons.mic_off : Icons.mic,
-                color: Colors.black,
+                color: Color(0xFF21A900),
               ),
             ),
           ),
@@ -110,7 +110,7 @@ class ChatVoiceScreenState extends State<ChatVoiceScreen>
                 padding: const EdgeInsets.all(30),
                 backgroundColor: Colors.white,
               ),
-              child: const Icon(Icons.close, color: Colors.black),
+              child: const Icon(Icons.close, color: Color(0xFF21A900)),
             ),
           ),
         ],
@@ -133,13 +133,13 @@ class DiagonalGreenGradientPainter extends CustomPainter {
         begin: Alignment(-1.0 + offset * 2, -1.0 + offset * 2),
         end: Alignment(1.0 + offset * 2, 1.0 + offset * 2),
         colors: [
-          Colors.green.shade400,
-          Colors.green.shade300,
-          Colors.green.shade200,
-          Colors.green.shade300,
-          Colors.green.shade400,
+          Color(0xFF8DFF00),
+          Color(0xFF21A900),
+          Color(0xFF1A8A00),
+          Color(0xFF21A900),
+          Color(0xFF8DFF00),
         ],
-        stops: const [0.0, 0.25, 0.5, 0.75, 1.0],
+        stops: const [0.0, 0.3, 0.5, 0.7, 1.0],
         tileMode: TileMode.mirror,
       ).createShader(rect);
 
