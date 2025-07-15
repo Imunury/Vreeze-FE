@@ -1,9 +1,9 @@
 import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:dio/dio.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
-import '../services/auth_service.dart';
+// import 'package:dio/dio.dart';
+// import 'package:flutter_dotenv/flutter_dotenv.dart';
+// import '../services/auth_service.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -13,14 +13,14 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final _formKey = GlobalKey<FormState>();
+  // final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  final _authService = AuthService(Dio(BaseOptions(
-    baseUrl: dotenv.env['API_BASE_URL'] ?? 'https://api.example.com',
-    connectTimeout: const Duration(seconds: 5),
-    receiveTimeout: const Duration(seconds: 3),
-  )));
+  // final _authService = AuthService(Dio(BaseOptions(
+  //   baseUrl: dotenv.env['API_BASE_URL'] ?? 'https://api.example.com',
+  //   connectTimeout: const Duration(seconds: 5),
+  //   receiveTimeout: const Duration(seconds: 3),
+  // )));
   bool _isLoading = false;
   Color backgroundColor = Colors.black;
   late Timer _timer;
@@ -56,31 +56,31 @@ class _LoginScreenState extends State<LoginScreen> {
     Colors.pink,
   ];
 
-  Future<void> _login() async {
-    if (_formKey.currentState!.validate()) {
-      setState(() => _isLoading = true);
+  // Future<void> _login() async {
+  //   if (_formKey.currentState!.validate()) {
+  //     setState(() => _isLoading = true);
 
-      try {
-        await _authService.login(
-          _emailController.text,
-          _passwordController.text,
-        );
-        if (mounted) {
-          Navigator.pushReplacementNamed(context, '/home');
-        }
-      } catch (e) {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('로그인에 실패했습니다.')),
-          );
-        }
-      } finally {
-        if (mounted) {
-          setState(() => _isLoading = false);
-        }
-      }
-    }
-  }
+  //     try {
+  //       await _authService.login(
+  //         _emailController.text,
+  //         _passwordController.text,
+  //       );
+  //       if (mounted) {
+  //         Navigator.pushReplacementNamed(context, '/home');
+  //       }
+  //     } catch (e) {
+  //       if (mounted) {
+  //         ScaffoldMessenger.of(context).showSnackBar(
+  //           const SnackBar(content: Text('로그인에 실패했습니다.')),
+  //         );
+  //       }
+  //     } finally {
+  //       if (mounted) {
+  //         setState(() => _isLoading = false);
+  //       }
+  //     }
+  //   }
+  // }
 
   // 하단 패널의 각 버튼 생성 함수 (아이콘 추가)
   Widget _buildBottomButton(

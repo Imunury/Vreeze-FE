@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 // import 'package:firebase_core/firebase_core.dart';
 import 'screens/delete_account_screen.dart';
-import 'screens/phone_auth_screen.dart';
 import 'screens/profile_screen.dart';
 import 'screens/setting_screen.dart';
 import 'screens/chat_screen.dart';
@@ -10,9 +9,7 @@ import 'screens/chat_voice_screen.dart';
 import 'screens/make_voice_screen.dart';
 import 'screens/my_subscribe_screen.dart';
 import 'screens/record_voice_screen.dart';
-import 'screens/login_screen.dart';
 import 'MainLayout.dart';
-import 'cores/dio_client.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
